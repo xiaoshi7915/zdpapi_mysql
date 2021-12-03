@@ -1,5 +1,5 @@
 import asyncio
-from zapi_mysql import Mysql
+from zdpapi_mysql import Mysql
 db = Mysql(host='127.0.0.1',
            port=3306,
            user='root',
