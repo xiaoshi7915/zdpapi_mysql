@@ -30,11 +30,10 @@ async def test_insert(loop):
     await crud.add("赵六")
 
 
-# async def test_insert_many(loop):
-#     # 插入SQL语句
-#     data = [(4, 'gothic metal'), (5, 'doom metal'), (6, 'post metal')]
-#     sql = "INSERT INTO user VALUES(%s,%s)"
-#     await db.execute(sql, data=data)
+async def test_insert_many(loop):
+    # 插入SQL语句
+    data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
+    await crud.add_many(data)
     
 
 # async def test_find_many(loop):
@@ -54,6 +53,6 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(test_create_table(loop))
     loop.run_until_complete(test_insert(loop))
-    # loop.run_until_complete(test_insert_many(loop))
+    loop.run_until_complete(test_insert_many(loop))
     # loop.run_until_complete(test_find_many(loop))
     # loop.run_until_complete(test_find_one(loop))

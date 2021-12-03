@@ -130,3 +130,94 @@ loop = asyncio.get_event_loop()
 loop.run_until_complete(test_example_execute(loop))
 ```
 
+## 三、CRUD快捷工具
+
+### 3.1 新增用户
+```python
+import asyncio
+from zdpapi_mysql import Mysql, Crud
+db = Mysql(host='127.0.0.1',
+           port=3306,
+           user='root',
+           password='root',
+           db='test')
+
+crud = Crud(db, "user", ["name"])
+
+async def test_create_table(loop):
+    # 删除表
+    await db.connect()
+    sql = "DROP TABLE IF EXISTS user;"
+
+    # 创建表
+    await db.execute(sql)
+    sql = """CREATE TABLE user(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255));"""
+    await db.execute(sql)
+
+    # 插入SQL语句
+    sql = "INSERT INTO user VALUES(1,'张三')"
+    await db.execute(sql)
+
+
+async def test_insert(loop):
+    # 插入SQL语句
+    await crud.add("李四")
+    await crud.add("王五")
+    await crud.add("赵六")
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_create_table(loop))
+    loop.run_until_complete(test_insert(loop))
+
+```
+
+### 3.2 添加多条数据
+```python
+import asyncio
+from zdpapi_mysql import Mysql, Crud
+db = Mysql(host='127.0.0.1',
+           port=3306,
+           user='root',
+           password='root',
+           db='test')
+
+crud = Crud(db, "user", ["name"])
+
+async def test_create_table(loop):
+    # 删除表
+    await db.connect()
+    sql = "DROP TABLE IF EXISTS user;"
+
+    # 创建表
+    await db.execute(sql)
+    sql = """CREATE TABLE user(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255));"""
+    await db.execute(sql)
+
+    # 插入SQL语句
+    sql = "INSERT INTO user VALUES(1,'张三')"
+    await db.execute(sql)
+
+
+async def test_insert(loop):
+    # 插入SQL语句
+    await crud.add("李四")
+    await crud.add("王五")
+    await crud.add("赵六")
+
+
+async def test_insert_many(loop):
+    # 插入SQL语句
+    data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
+    await crud.add_many(data)
+    
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_create_table(loop))
+    loop.run_until_complete(test_insert(loop))
+    loop.run_until_complete(test_insert_many(loop))
+
+```
+
