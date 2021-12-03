@@ -6,7 +6,6 @@ db = Mysql(host='127.0.0.1',
            password='root',
            db='test')
 
-
 async def test_create_table(loop):
     # 删除表
     await db.connect()

@@ -3,6 +3,7 @@ import asyncio
 from typing import List, Tuple, Union, Any
 from .connection import connect
 
+
 class Mysql:
     def __init__(self,
                  host='127.0.0.1',
@@ -34,6 +35,7 @@ class Mysql:
 
     async def execute(self,
                       sql: str = None,
+                      values: List[Any] = None,
                       data: List[Tuple] = None,
                       return_all=True) -> Union[Tuple[Tuple], Tuple[Any]]:
         """
@@ -48,6 +50,14 @@ class Mysql:
             if data is not None:
                 try:
                     await cur.executemany(sql, data)
+                    await self.conn.commit()
+                except Exception as e:
+                    await self.conn.rollback()
+                    raise e
+            elif values is not None:
+                # 执行带参数的SQL语句
+                try:
+                    await cur.execute(sql, *values)
                     await self.conn.commit()
                 except Exception as e:
                     await self.conn.rollback()

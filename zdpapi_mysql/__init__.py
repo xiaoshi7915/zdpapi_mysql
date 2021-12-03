@@ -1,4 +1,5 @@
 from .mysql import Mysql
+from .crud import Crud
 from .pymysql.converters import escape_dict, escape_sequence, escape_string
 from .pymysql.err import (Warning, Error, InterfaceError, DataError,
                          DatabaseError, OperationalError, IntegrityError,
@@ -8,7 +9,7 @@ from .pymysql.err import (Warning, Error, InterfaceError, DataError,
 from .connection import Connection, connect
 from .cursors import Cursor, SSCursor, DictCursor, SSDictCursor
 
-__version__ = '0.0.22'
+__version__ = '0.1.0'
 
 __all__ = [
 
