@@ -1,5 +1,5 @@
 from .mysql import Mysql
-from typing import List, Any, Tuple
+from typing import Dict, List, Any, Tuple
 
 
 class Crud:
@@ -42,23 +42,22 @@ class Crud:
         sql = self._get_insert_sql()
         await self.db.execute(sql, data=data)
 
-    async def delete(self):
+    async def delete(self, id:int):
         """
         删除单条数据
         """
-        pass
+        sql = f"DELETE FROM {self.table} WHERE id = %s;"
+        await self.db.execute(sql, values=[id])
 
-    async def delete_many(self):
-        """
-        删除多条数据
-        """
-        pass
 
-    async def delete_ids(self):
+    async def delete_ids(self, ids:Tuple[int]):
         """
         根据ID列表删除多条数据
         """
-        pass
+        ids_=["%s" for _ in range(len(ids))]
+        ids_str=", ".join(ids_)
+        sql = f"DELETE FROM {self.table} WHERE id IN({ids_str});"
+        await self.db.execute(sql, values=ids)
 
     async def update(self):
         """

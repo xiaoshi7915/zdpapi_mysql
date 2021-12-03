@@ -35,7 +35,7 @@ class Mysql:
 
     async def execute(self,
                       sql: str = None,
-                      values: List[Any] = None,
+                      values: Tuple[Any] = None,
                       data: List[Tuple] = None,
                       return_all=True) -> Union[Tuple[Tuple], Tuple[Any]]:
         """
@@ -57,7 +57,7 @@ class Mysql:
             elif values is not None:
                 # 执行带参数的SQL语句
                 try:
-                    await cur.execute(sql, *values)
+                    await cur.execute(sql, values)
                     await self.conn.commit()
                 except Exception as e:
                     await self.conn.rollback()

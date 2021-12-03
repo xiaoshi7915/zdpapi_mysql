@@ -221,3 +221,116 @@ if __name__ == "__main__":
 
 ```
 
+### 3.3 根据ID删除数据
+```python
+import asyncio
+from zdpapi_mysql import Mysql, Crud
+db = Mysql(host='127.0.0.1',
+           port=3306,
+           user='root',
+           password='root',
+           db='test')
+
+crud = Crud(db, "user", ["name"])
+
+async def test_create_table(loop):
+    # 删除表
+    await db.connect()
+    sql = "DROP TABLE IF EXISTS user;"
+
+    # 创建表
+    await db.execute(sql)
+    sql = """CREATE TABLE user(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255));"""
+    await db.execute(sql)
+
+    # 插入SQL语句
+    sql = "INSERT INTO user VALUES(1,'张三')"
+    await db.execute(sql)
+
+
+async def test_insert(loop):
+    # 插入SQL语句
+    await crud.add("李四")
+    await crud.add("王五")
+    await crud.add("赵六")
+
+
+async def test_insert_many(loop):
+    # 插入SQL语句
+    data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
+    await crud.add_many(data)
+    
+async def test_delete(loop):
+    # 根据ID删除数据
+    await crud.delete(1)
+    await crud.delete(2)
+    await crud.delete(3)
+    
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_create_table(loop))
+    loop.run_until_complete(test_insert(loop))
+    loop.run_until_complete(test_insert_many(loop))
+    loop.run_until_complete(test_delete(loop))
+
+```
+
+### 3.4 根据ID列表删除
+```python
+import asyncio
+from zdpapi_mysql import Mysql, Crud
+db = Mysql(host='127.0.0.1',
+           port=3306,
+           user='root',
+           password='root',
+           db='test')
+
+crud = Crud(db, "user", ["name"])
+
+async def test_create_table(loop):
+    # 删除表
+    await db.connect()
+    sql = "DROP TABLE IF EXISTS user;"
+
+    # 创建表
+    await db.execute(sql)
+    sql = """CREATE TABLE user(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255));"""
+    await db.execute(sql)
+
+    # 插入SQL语句
+    sql = "INSERT INTO user VALUES(1,'张三')"
+    await db.execute(sql)
+
+
+async def test_insert(loop):
+    # 插入SQL语句
+    await crud.add("李四")
+    await crud.add("王五")
+    await crud.add("赵六")
+
+
+async def test_insert_many(loop):
+    # 插入SQL语句
+    data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
+    await crud.add_many(data)
+    
+async def test_delete(loop):
+    # 根据ID删除数据
+    await crud.delete(1)
+    await crud.delete(2)
+    await crud.delete(3)
+    
+async def test_delete_ids(loop):
+    # 根据ID列表删除数据
+    await crud.delete_ids((3,4,5))
+    
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_create_table(loop))
+    loop.run_until_complete(test_insert(loop))
+    loop.run_until_complete(test_insert_many(loop))
+    loop.run_until_complete(test_delete(loop))
+    loop.run_until_complete(test_delete_ids(loop))
+```

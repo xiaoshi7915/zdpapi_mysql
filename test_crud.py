@@ -35,6 +35,16 @@ async def test_insert_many(loop):
     data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
     await crud.add_many(data)
     
+async def test_delete(loop):
+    # 根据ID删除数据
+    await crud.delete(1)
+    await crud.delete(2)
+    await crud.delete(3)
+    
+async def test_delete_ids(loop):
+    # 根据ID列表删除数据
+    await crud.delete_ids((3,4,5))
+    
 
 # async def test_find_many(loop):
 #     # 插入SQL语句
@@ -54,5 +64,7 @@ if __name__ == "__main__":
     loop.run_until_complete(test_create_table(loop))
     loop.run_until_complete(test_insert(loop))
     loop.run_until_complete(test_insert_many(loop))
+    loop.run_until_complete(test_delete(loop))
+    loop.run_until_complete(test_delete_ids(loop))
     # loop.run_until_complete(test_find_many(loop))
     # loop.run_until_complete(test_find_one(loop))
