@@ -42,34 +42,70 @@ class Crud:
         sql = self._get_insert_sql()
         await self.db.execute(sql, data=data)
 
-    async def delete(self, id:int):
+    async def delete(self, id: int):
         """
         删除单条数据
         """
         sql = f"DELETE FROM {self.table} WHERE id = %s;"
         await self.db.execute(sql, values=[id])
 
-
-    async def delete_ids(self, ids:Tuple[int]):
+    async def delete_ids(self, ids: Tuple[int]):
         """
         根据ID列表删除多条数据
         """
-        ids_=["%s" for _ in range(len(ids))]
-        ids_str=", ".join(ids_)
+        ids_ = ["%s" for _ in range(len(ids))]
+        ids_str = ", ".join(ids_)
         sql = f"DELETE FROM {self.table} WHERE id IN({ids_str});"
         await self.db.execute(sql, values=ids)
 
-    async def update(self):
+    async def update(self, id: int, update_dict: Dict):
         """
         更新单条数据
         """
-        pass
+        update_ = []
+        values = []
+        
+        # 组合参数
+        for k, v in update_dict.items():
+            update_.append(f"{k} = %s")
+            values.append(v)
+        update_str = ", ".join(update_)
+        
+        # 生成SQL语句
+        sql = f"UPDATE {self.table} SET {update_str} WHERE id = %s;"
+        values.append(id)
+        
+        # 执行SQL语句
+        await self.db.execute(sql, tuple(values))
 
-    async def update_many(self):
+    async def update_many(self, updates:List[Dict]):
         """
         更新多条数据
         """
-        pass
+        
+        # 数组为空或者字典没有id字段，则直接返回
+        if not updates or updates[0].get("id") is None:
+            return
+        
+        # 更新多条数据
+        for data in updates:
+            # 取出ID
+            id_ = data.get("id")
+            del data["id"]
+            
+            update_ = []
+            values = []
+
+            # 组合参数
+            for k, v in data.items():
+                update_.append(f"{k} = %s")
+                values.append(v)
+            update_str = ", ".join(update_)
+
+            # 生成SQL语句
+            sql = f"UPDATE {self.table} SET {update_str} WHERE id = %s;"
+            values.append(id_)
+            await self.db.execute(sql, tuple(values))
 
     async def update_ids(self):
         """

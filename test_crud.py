@@ -45,6 +45,18 @@ async def test_delete_ids(loop):
     # 根据ID列表删除数据
     await crud.delete_ids((3,4,5))
     
+async def test_update(loop):
+    # 根据ID更新数据
+    await crud.update(6, {"name":"二郎神111"})
+    
+async def test_update_many(loop):
+    # 更新多条数据
+    data=[
+        {"id":6, "name":"猪八戒"},
+        {"id":7, "name":"嫦娥"},
+    ]
+    await crud.update_many(data)
+    
 
 # async def test_find_many(loop):
 #     # 插入SQL语句
@@ -66,5 +78,7 @@ if __name__ == "__main__":
     loop.run_until_complete(test_insert_many(loop))
     loop.run_until_complete(test_delete(loop))
     loop.run_until_complete(test_delete_ids(loop))
+    loop.run_until_complete(test_update(loop))
+    loop.run_until_complete(test_update_many(loop))
     # loop.run_until_complete(test_find_many(loop))
     # loop.run_until_complete(test_find_one(loop))
