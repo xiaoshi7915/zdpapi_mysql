@@ -1,6 +1,11 @@
 # zapi_mysql
 基于异步的快速操作MySQL的组件
 
+使用pip安装
+```shell
+pip install zapi_mysql
+```
+
 ## 一、增删改数据
 
 ### 1.1 创建表
