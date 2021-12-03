@@ -1,7 +1,7 @@
 import asyncio
-import aiomysql
+# import aiomysql
 from typing import List, Tuple, Union, Any
-
+from .connection import connect
 
 class Mysql:
     def __init__(self,
@@ -23,7 +23,8 @@ class Mysql:
         """
         建立数据库连接
         """
-        self.conn = await aiomysql.connect(
+        # self.conn = await aiomysql.connect(
+        self.conn = await connect(
             host=self.host,
             port=self.port,
             user=self.user,
