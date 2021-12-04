@@ -107,7 +107,7 @@ class Crud:
             values.append(id_)
             await self.db.execute(sql, tuple(values))
 
-    async def find(self, id: int) -> Tuple:
+    async def find(self, id: int) -> Tuple[Any]:
         """
         查找单条数据
         """
@@ -132,8 +132,24 @@ class Crud:
         """
         pass
 
-    async def find_ids(self):
+    async def find_ids(self, ids: List[int]) -> Tuple[Tuple[Any]]:
         """
         根据ID列表查找多条数据
         """
-        pass
+        # 字段
+        columns = []
+        if "id" not in self.columns:
+            columns.append("id")
+        columns.extend(self.columns)
+
+        # 字段字符串
+        columns_str = ", ".join(columns)
+
+        # 查询字符串
+        query_ = ["%s" for _ in range(len(ids))]
+        query_str = ", ".join(query_)
+
+        # SQL语句
+        sql = f"SELECT {columns_str} FROM {self.table} WHERE id in ({query_str});"
+        result = await self.db.execute(sql, values=tuple(ids))
+        return result
