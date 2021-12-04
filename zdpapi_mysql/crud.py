@@ -42,19 +42,34 @@ class Crud:
         sql = f"INSERT INTO {self.table} ({names}) VALUES ({values})"
         return sql
 
-    async def add(self, *args):
+    async def add(self, data_dict:Dict):
         """
         添加单条数据
         """
-        sql = self._get_insert_sql()
-        await self.db.execute(sql, values=args)
+        name_str = ", ".join(data_dict.keys())
+        value_str = ", ".join(["%s" for _ in data_dict.values()])
+        sql = f"INSERT INTO {self.table}({name_str}) values ({value_str})"
+        await self.db.execute(sql, values=tuple(data_dict.values()))
 
-    async def add_many(self, data: List[Tuple]):
+    async def add_many(self, data: List[Dict]):
         """
         添加多条数据
         """
+        if len(data) == 0:
+            return
+        
+        # 准备SQL语句
+        data_dict = data[0]
+        name_str = ", ".join(data_dict.keys())
+        value_str = ", ".join(["%s" for _ in data_dict.values()])
+        sql = f"INSERT INTO {self.table}({name_str}) values ({value_str})"
+        
+        # 提取数据
+        values = [tuple(item.values()) for item in data]
         sql = self._get_insert_sql()
-        await self.db.execute(sql, data=data)
+        
+        # 执行SQL语句
+        await self.db.execute(sql, data=values)
 
     async def delete(self, id: int):
         """

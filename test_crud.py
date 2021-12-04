@@ -25,15 +25,24 @@ async def test_create_table(loop):
 
 
 async def test_insert(loop):
-    # 插入SQL语句
-    await crud.add("李四")
-    await crud.add("王五")
-    await crud.add("赵六")
+    # 插入单条数据
+    await crud.add({"name": "李四"})
+    await crud.add({"name": "王五"})
+    await crud.add({"name": "赵六"})
 
 
 async def test_insert_many(loop):
-    # 插入SQL语句
-    data = [("孙悟空",), ("猪八戒",), ("沙僧",), ]
+    # 插入多条数据
+    data = [
+        {"name": "唐僧"}, 
+        {"name": "沙僧"}, 
+        {"name": "猪八戒"}, 
+        {"name": "孙悟空"}, 
+        {"name": "唐僧"},
+        {"name": "沙僧"},
+        {"name": "猪八戒"},
+        {"name": "孙悟空"},
+    ]
     await crud.add_many(data)
 
 
@@ -74,10 +83,12 @@ async def test_find_ids(loop):
     result = await crud.find_ids([6, 7, 8])
     print("查询结果：\n", result)
 
+
 async def test_find_page(loop):
     # 分页查询数据
     result = await crud.find_page(1, 20)
     print("查询结果：\n", result)
+
 
 async def test_find_total(loop):
     # 查询数据总数
