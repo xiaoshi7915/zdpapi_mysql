@@ -64,11 +64,10 @@ async def test_update_many(loop):
 #     result = await db.execute(sql)
 #     print("查询结果：\n", result)
  
-# async def test_find_one(loop):
-#     # 查询单条数据
-#     sql = "SELECT id, name FROM user ORDER BY id"
-#     result = await db.execute(sql, return_all=False)
-#     print("查询结果：\n", result)
+async def test_find_one(loop):
+    # 查询单条数据
+    result = await crud.find(6)
+    print("查询结果：\n", result)
    
 
 if __name__ == "__main__":
@@ -81,4 +80,4 @@ if __name__ == "__main__":
     loop.run_until_complete(test_update(loop))
     loop.run_until_complete(test_update_many(loop))
     # loop.run_until_complete(test_find_many(loop))
-    # loop.run_until_complete(test_find_one(loop))
+    loop.run_until_complete(test_find_one(loop))
