@@ -1,6 +1,8 @@
 # zapi_mysql
 基于异步的快速操作MySQL的组件
 
+项目地址： https://github.com/zhangdapeng520/zdpapi_mysql
+
 使用pip安装
 ```shell
 pip install zapi_mysql
