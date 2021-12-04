@@ -142,7 +142,16 @@ class Crud:
         
         # 分页查询
         offset = (page - 1) * size
-        sql = f"SELECT {columns_str} FROM {self.table} ORDER BY {order_column} {order_type} LIMIT {offset}, {size}"
+        
+        # 这里采用“延迟关联”大大提高查询效率：《高性能MySQL》 第3版 242页
+        sql = f"""
+        SELECT {columns_str} FROM {self.table} 
+        INNER JOIN(
+            SELECT id FROM {self.table}
+            ORDER BY id LIMIT {offset}, {size}
+        ) AS t1 USING(id) 
+        ORDER BY {order_column} {order_type};
+        """
         result = await self.db.execute(sql)
         return result
 
@@ -150,7 +159,7 @@ class Crud:
         """
         查询数据总数
         """
-        sql = f"SELECT COUNT(*) FROM {self.table}"
+        sql = f"SELECT COUNT(*) FROM {self.table};"
         result = await self.db.execute(sql)
         total=0
         try:
