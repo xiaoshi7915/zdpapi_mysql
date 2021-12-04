@@ -20,6 +20,20 @@ class Crud:
         values = ", ".join(values_)
         return names, values
 
+    def _get_columns_id_str(self, columns:List) -> str:
+        """
+        返回字段字符串，用跟在select后面做列筛选
+        """
+        # 字段
+        columns_ = []
+        if "id" not in columns:
+            columns_.append("id")
+        columns_.extend(columns)
+
+        # 字段字符串
+        columns_str = ", ".join(columns_)
+        return columns_str
+    
     def _get_insert_sql(self):
         """
         获取新增数据的SQL
@@ -111,26 +125,19 @@ class Crud:
         """
         查找单条数据
         """
-
-        # 字段
-        columns = []
-        if "id" not in self.columns:
-            columns.append("id")
-        columns.extend(self.columns)
-
         # 字段字符串
-        columns_str = ", ".join(columns)
+        columns_str = self._get_columns_id_str(self.columns)
 
         # SQL语句
         sql = f"SELECT {columns_str} FROM {self.table} WHERE id = %s;"
         result = await self.db.execute(sql, values=(id,), return_all=False)
         return result
 
-    async def find_many(self):
+    async def find_page(self, page:int, size:int):
         """
-        查找多条数据
+        分页查找多条数据
         """
-        pass
+        sql = "select "
 
     async def find_ids(self, ids: List[int]) -> Tuple[Tuple[Any]]:
         """
