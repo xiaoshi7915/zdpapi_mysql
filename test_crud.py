@@ -74,6 +74,16 @@ async def test_find_ids(loop):
     result = await crud.find_ids([6, 7, 8])
     print("查询结果：\n", result)
 
+async def test_find_page(loop):
+    # 分页查询数据
+    result = await crud.find_page(1, 20)
+    print("查询结果：\n", result)
+
+async def test_find_total(loop):
+    # 查询数据总数
+    result = await crud.find_total()
+    print("查询结果：\n", result)
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
@@ -86,3 +96,5 @@ if __name__ == "__main__":
     loop.run_until_complete(test_update_many(loop))
     loop.run_until_complete(test_find_one(loop))
     loop.run_until_complete(test_find_ids(loop))
+    loop.run_until_complete(test_find_page(loop))
+    loop.run_until_complete(test_find_total(loop))

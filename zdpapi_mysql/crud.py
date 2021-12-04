@@ -133,24 +133,38 @@ class Crud:
         result = await self.db.execute(sql, values=(id,), return_all=False)
         return result
 
-    async def find_page(self, page:int, size:int):
+    async def find_page(self, page:int = 1, size:int = 20, order_column:str = "id", order_type:str = "DESC") -> Tuple[Tuple[Any]]:
         """
         分页查找多条数据
         """
-        sql = "select "
+        # 字段字符串
+        columns_str = self._get_columns_id_str(self.columns)
+        
+        # 分页查询
+        offset = (page - 1) * size
+        sql = f"SELECT {columns_str} FROM {self.table} ORDER BY {order_column} {order_type} LIMIT {offset}, {size}"
+        result = await self.db.execute(sql)
+        return result
 
+    async def find_total(self) -> int:
+        """
+        查询数据总数
+        """
+        sql = f"SELECT COUNT(*) FROM {self.table}"
+        result = await self.db.execute(sql)
+        total=0
+        try:
+            total = result[0][0]
+        except:
+            pass
+        return total
+    
     async def find_ids(self, ids: List[int]) -> Tuple[Tuple[Any]]:
         """
         根据ID列表查找多条数据
         """
-        # 字段
-        columns = []
-        if "id" not in self.columns:
-            columns.append("id")
-        columns.extend(self.columns)
-
         # 字段字符串
-        columns_str = ", ".join(columns)
+        columns_str = self._get_columns_id_str(self.columns)
 
         # 查询字符串
         query_ = ["%s" for _ in range(len(ids))]
