@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zdpapi_mysql"
-version = "1.0.1"
+version = "1.0.2"
 description = "基于异步的快速操作MySQL的组件"
 authors = ["张大鹏 <lxgzhw@163.com>"]
 license = "MIT"

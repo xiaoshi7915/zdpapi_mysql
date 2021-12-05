@@ -20,7 +20,7 @@ class Crud:
         values = ", ".join(values_)
         return names, values
 
-    def _get_columns_id_str(self, columns:List) -> str:
+    def _get_columns_id_str(self, columns: List) -> str:
         """
         返回字段字符串，用跟在select后面做列筛选
         """
@@ -33,7 +33,7 @@ class Crud:
         # 字段字符串
         columns_str = ", ".join(columns_)
         return columns_str
-    
+
     def _get_insert_sql(self):
         """
         获取新增数据的SQL
@@ -42,7 +42,29 @@ class Crud:
         sql = f"INSERT INTO {self.table} ({names}) VALUES ({values})"
         return sql
 
-    async def add(self, data_dict:Dict):
+    def _to_dict(self, data: Tuple) -> Dict:
+        """
+        将tuple类型的结果转换为dict类型的结果
+        """
+        # 获取字段
+        columns_ = []
+        if "id" not in self.columns:
+            columns_.append("id")
+        columns_.extend(self.columns)
+
+        # 转换数据
+        return dict(zip(columns_, data))
+
+    def _to_list_dict(self, data: Tuple) -> List[Dict]:
+        """
+        将tuple类型列表的结果转换为dict类型列表的结果
+        """
+        result = []
+        for i in data:
+            result.append(self._to_dict(i))
+        return result
+
+    async def add(self, data_dict: Dict):
         """
         添加单条数据
         """
@@ -57,17 +79,17 @@ class Crud:
         """
         if len(data) == 0:
             return
-        
+
         # 准备SQL语句
         data_dict = data[0]
         name_str = ", ".join(data_dict.keys())
         value_str = ", ".join(["%s" for _ in data_dict.values()])
         sql = f"INSERT INTO {self.table}({name_str}) values ({value_str})"
-        
+
         # 提取数据
         values = [tuple(item.values()) for item in data]
         sql = self._get_insert_sql()
-        
+
         # 执行SQL语句
         await self.db.execute(sql, data=values)
 
@@ -146,18 +168,19 @@ class Crud:
         # SQL语句
         sql = f"SELECT {columns_str} FROM {self.table} WHERE id = %s;"
         result = await self.db.execute(sql, values=(id,), return_all=False)
-        return result
 
-    async def find_page(self, page:int = 1, size:int = 20, order_column:str = "id", order_type:str = "DESC") -> Tuple[Tuple[Any]]:
+        return self._to_dict(result)
+
+    async def find_page(self, page: int = 1, size: int = 20, order_column: str = "id", order_type: str = "DESC") -> List[Dict]:
         """
         分页查找多条数据
         """
         # 字段字符串
         columns_str = self._get_columns_id_str(self.columns)
-        
+
         # 分页查询
         offset = (page - 1) * size
-        
+
         # 这里采用“延迟关联”大大提高查询效率：《高性能MySQL》 第3版 242页
         sql = f"""
         SELECT {columns_str} FROM {self.table} 
@@ -168,7 +191,7 @@ class Crud:
         ORDER BY {order_column} {order_type};
         """
         result = await self.db.execute(sql)
-        return result
+        return self._to_list_dict(result)
 
     async def find_total(self) -> int:
         """
@@ -176,14 +199,14 @@ class Crud:
         """
         sql = f"SELECT COUNT(*) FROM {self.table};"
         result = await self.db.execute(sql)
-        total=0
+        total = 0
         try:
             total = result[0][0]
         except:
             pass
         return total
-    
-    async def find_ids(self, ids: List[int]) -> Tuple[Tuple[Any]]:
+
+    async def find_ids(self, ids: List[int]) -> List[Dict]:
         """
         根据ID列表查找多条数据
         """
@@ -197,4 +220,4 @@ class Crud:
         # SQL语句
         sql = f"SELECT {columns_str} FROM {self.table} WHERE id in ({query_str});"
         result = await self.db.execute(sql, values=tuple(ids))
-        return result
+        return self._to_list_dict(result)
